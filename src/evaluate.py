@@ -320,14 +320,42 @@ def main(version: str = "v1", seed: int = 42, gate_f1: float = 0.70) -> None:
     print("[METRICS]", json.dumps(metrics, indent=2))
     print(f"[OK] Modèle sauvegardé : {model_path}")
 
+    # --- CORRECTION ICI (Indentation alignée) ---
+    REPORTS_DIR = Path("reports")
+    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+
+    metrics_path = REPORTS_DIR / "metrics.json"
+
+    with metrics_path.open("w", encoding="utf-8") as f:
+        json.dump(
+            {
+                "accuracy": metrics["accuracy"],
+                "precision": metrics["precision"],
+                "recall": metrics["recall"],
+                "f1": metrics["f1"],
+                "best_threshold": metrics["best_threshold"],
+                "baseline_f1": metrics["baseline_f1"],
+            },
+            f,
+            indent=2,
+        )
+    # --------------------------------------------
+
 
     # Déploiement du modèle (registry minimaliste)
     if entry["passed_gate"]:
         REGISTRY_DIR.mkdir(parents=True, exist_ok=True)
         CURRENT_MODEL_PATH.write_text(model_filename, encoding="utf-8")
+        # alias stable pour DVC (evaluate dépendra de ce fichier)
+        stable_model_path = MODELS_DIR / "model.joblib"
+        joblib.dump(pipe, stable_model_path)
+
         print(f"[DEPLOY] Modèle activé : {model_filename}")
     else:
         print("[DEPLOY] Refusé : F1 insuffisante ou baseline non battue.")
+    
+    REPORTS_DIR = Path("reports")
+
 
 
 

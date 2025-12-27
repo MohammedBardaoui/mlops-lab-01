@@ -430,6 +430,8 @@ def main() -> None:
 
     print(f"[OK] Statistiques d'entraînement générées : {TRAIN_STATS_PATH}")
 
+    print(f"Modifie par exemple src/prepare_data.py (Ajouter un print, changer un seuil…)")
+
 
 
 
